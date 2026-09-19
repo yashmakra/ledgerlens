@@ -1,4 +1,4 @@
-services:
+﻿services:
   - type: web
     name: ledgerlens
     runtime: docker
@@ -7,7 +7,7 @@ services:
     dockerContext: .
     # The free tier is used for a demo, so run the durable queue worker in
     # the same service as the API. The worker loops while uvicorn serves HTTP.
-    dockerCommand: /bin/sh -c "python -m app.worker & exec uvicorn app.main:app --host 0.0.0.0 --port 8000"
+    dockerCommand: 'python -m app.worker & exec uvicorn app.main:app --host 0.0.0.0 --port 8000'
     healthCheckPath: /health/ready
     envVars:
       - key: DATABASE_URL
@@ -24,3 +24,4 @@ services:
 databases:
   - name: ledgerlens-db
     plan: free
+
