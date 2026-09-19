@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="AI-assisted supplier invoice reconciliation and human review workspace">
+  <title>Invoice Review Queue · LedgerLens</title>
+  <link rel="stylesheet" href="/static/dashboard.css?v=20260917-staged">
+</head>
+<body data-cases-endpoint="/cases/">
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span><strong>LedgerLens</strong><small>Invoice intelligence</small></span>
+      </div>
+
+      <nav class="primary-nav" aria-label="Primary navigation">
+        <button class="nav-item active" data-view="overview">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 13h6V4H4v9Zm0 7h6v-4H4v4Zm10 0h6v-9h-6v9Zm0-16v4h6V4h-6Z"/></svg>
+          <span>Overview</span>
+        </button>
+        <button class="nav-item" data-view="cases">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h10v3h4v15H3V6h4V3Zm2 3h6V5H9v1Zm-4 2v11h14V8H5Zm3 3h8v2H8v-2Zm0 4h5v2H8v-2Z"/></svg>
+          <span>Review queue</span><span class="nav-count" id="nav-review-count">0</span>
+        </button>
+        <button class="nav-item" data-view="documents">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2h8l5 5v15H6V2Zm2 2v16h9V8h-4V4H8Zm7 1.4V6h.6L15 5.4ZM10 11h5v2h-5v-2Zm0 4h5v2h-5v-2Z"/></svg>
+          <span>Documents</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-card">
+        <div class="sidebar-card-head"><span class="pulse" id="system-pulse"></span><strong>System status</strong></div>
+        <div class="health-row"><span>Database</span><b id="health-database">Checking</b></div>
+        <div class="health-row"><span>OCR engine</span><b id="health-ocr">Checking</b></div>
+        <div class="health-row"><span>Worker queue</span><b id="health-worker">Checking</b></div>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="avatar">LR</div>
+        <span><strong>Local reviewer</strong><small>Human oversight</small></span>
+      </div>
+    </aside>
+
+    <main class="workspace">
+      <header class="topbar">
+        <button class="icon-button mobile-menu" id="mobile-menu" aria-label="Open navigation">
+          <svg viewBox="0 0 24 24"><path d="M4 6h16v2H4V6Zm0 5h16v2H4v-2Zm0 5h16v2H4v-2Z"/></svg>
+        </button>
+        <label class="global-search">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m20.7 19.3-4.2-4.2a7 7 0 1 0-1.4 1.4l4.2 4.2 1.4-1.4ZM5 11a6 6 0 1 1 12 0 6 6 0 0 1-12 0Z"/></svg>
+          <input id="global-search" type="search" placeholder="Search invoice, supplier or document…" autocomplete="off">
+          <kbd>/</kbd>
+        </label>
+        <div class="topbar-actions">
+          <span class="last-updated" id="last-updated">Not refreshed yet</span>
+          <button class="icon-button" id="refresh-button" aria-label="Refresh data" title="Refresh data">
+            <svg viewBox="0 0 24 24"><path d="M18.6 5.4A9 9 0 1 0 21 12h-2a7 7 0 1 1-2-4.9L14 10h7V3l-2.4 2.4Z"/></svg>
+          </button>
+          <button class="button button-primary" data-open-upload><span class="button-icon">＋</span> New reconciliation</button>
+        </div>
+      </header>
+
+      <section class="view active" id="overview-view">
+        <div class="page-heading">
+          <div><p class="eyebrow">Accounts payable / Workspace</p><h1>Clarity before every payment.</h1><p>One invoice. Connected records. Decisions backed by evidence.</p></div>
+          <div class="date-block"><span id="today-weekday"></span><strong id="today-date"></strong></div>
+        </div>
+
+        <section class="intake-hero">
+          <div><span class="hero-kicker">YOUR NEXT RECONCILIATION</span><h2>Start with the invoice.<br>We’ll check the connections.</h2><p>Match against saved purchasing records, inspect exceptions, and make an informed decision.</p><button class="button button-primary" data-open-upload>Upload invoice <span aria-hidden="true">↗</span></button><button class="hero-link" data-view-link="cases">Explore review queue →</button></div>
+          <div class="connection-map" aria-label="An invoice connects to saved purchasing records"><div class="map-invoice"><span>01 / START HERE</span><strong>Supplier invoice</strong><small>The only required upload</small></div><div class="map-records"><div><b>Purchase order</b><small>Verify items &amp; prices</small></div><div><b>Delivery receipt</b><small>Verify accepted quantities</small></div><div><b>Contract</b><small>Verify agreed tolerances</small></div></div><p>Saved records are reused. Missing records require review.</p></div>
+        </section>
+        <div class="metric-grid">
+          <article class="metric-card metric-dark">
+            <div class="metric-top"><span>Open workload</span><span class="metric-icon">↗</span></div>
+            <strong id="metric-open">0</strong><p><span id="metric-open-note">0 require review</span></p>
+          </article>
+          <article class="metric-card">
+            <div class="metric-top"><span>Exception rate</span><span class="metric-dot amber"></span></div>
+            <strong id="metric-exceptions">0%</strong><p>Cases with blocking checks</p>
+          </article>
+          <article class="metric-card">
+            <div class="metric-top"><span>Approved value</span><span class="metric-dot green"></span></div>
+            <strong id="metric-value">$0</strong><p>Across final approvals</p>
+          </article>
+          <article class="metric-card">
+            <div class="metric-top"><span>Documents processed</span><span class="metric-dot blue"></span></div>
+            <strong id="metric-documents">0</strong><p id="metric-documents-note">0 waiting in queue</p>
+          </article>
+        </div>
+
+        <div class="overview-grid">
+          <section class="panel queue-panel">
+            <div class="panel-head">
+              <div><p class="eyebrow">Priority work</p><h2>Needs your attention</h2></div>
+              <button class="text-button" data-view-link="cases">View all <span>→</span></button>
+            </div>
+            <div id="priority-list" class="priority-list"><div class="skeleton-row"></div><div class="skeleton-row"></div></div>
+          </section>
+
+          <section class="panel flow-panel">
+            <div class="panel-head"><div><p class="eyebrow">Live pipeline</p><h2>Document flow</h2></div><span class="live-pill"><i></i> Live</span></div>
+            <div class="flow-visual">
+              <div class="flow-stage"><span class="stage-icon">01</span><div><strong>Intake</strong><small id="flow-intake">0 documents</small></div></div>
+              <div class="flow-line"><i></i></div>
+              <div class="flow-stage"><span class="stage-icon">02</span><div><strong>Extract</strong><small id="flow-extract">0 processing</small></div></div>
+              <div class="flow-line"><i></i></div>
+              <div class="flow-stage"><span class="stage-icon">03</span><div><strong>Reconcile</strong><small id="flow-review">0 open cases</small></div></div>
+              <div class="flow-line"><i></i></div>
+              <div class="flow-stage"><span class="stage-icon">04</span><div><strong>Decide</strong><small id="flow-decided">0 completed</small></div></div>
+            </div>
+            <div class="model-card"><div class="model-orb"><span></span></div><div><small>From source to decision</small><strong>Evidence stays connected</strong><p>Inspect extracted fields and their source before approving.</p></div></div>
+          </section>
+        </div>
+
+        <section class="panel recent-panel">
+          <div class="panel-head"><div><p class="eyebrow">Recent activity</p><h2>Latest documents</h2></div><button class="text-button" data-view-link="documents">Document library <span>→</span></button></div>
+          <div class="table-wrap"><table><thead><tr><th>Document</th><th>Type</th><th>Processing</th><th>Uploaded</th><th></th></tr></thead><tbody id="recent-documents"></tbody></table></div>
+        </section>
+      </section>
+
+      <section class="view" id="cases-view">
+        <div class="page-heading compact">
+          <div><p class="eyebrow">Human review</p><h1>Exception queue</h1><p>Inspect evidence, resolve mismatches, and leave a complete audit trail.</p></div>
+          <button class="button button-secondary" id="reconcile-all">Run open reconciliations</button>
+        </div>
+        <div class="toolbar">
+          <div class="filter-tabs" id="case-filters">
+            <button class="active" data-case-filter="all">All <span id="filter-all-count">0</span></button>
+            <button data-case-filter="needs_review">Needs review <span id="filter-review-count">0</span></button>
+            <button data-case-filter="matched">Matched <span id="filter-matched-count">0</span></button>
+            <button data-case-filter="approved">Approved <span id="filter-approved-count">0</span></button>
+          </div>
+          <label class="table-search"><span>⌕</span><input id="case-search" type="search" placeholder="Filter queue"></label>
+        </div>
+        <section class="panel flush-panel">
+          <div class="table-wrap"><table class="data-table"><thead><tr><th>Invoice</th><th>Supplier ID</th><th>Amount</th><th>Exceptions</th><th>Status</th><th>Updated</th><th></th></tr></thead><tbody id="case-table"></tbody></table></div>
+          <div class="empty-state hidden" id="case-empty"><span>✓</span><h3>Queue is clear</h3><p>No cases match this filter.</p></div>
+        </section>
+      </section>
+
+      <section class="view" id="documents-view">
+        <div class="page-heading compact">
+          <div><p class="eyebrow">Source library</p><h1>Documents</h1><p>Upload, inspect, retry, and compare extraction strategies.</p></div>
+          <button class="button button-primary" data-open-upload><span class="button-icon">＋</span> New reconciliation</button>
+        </div>
+        <div class="document-summary" id="document-summary"></div>
+        <div class="toolbar">
+          <div class="filter-tabs" id="document-filters">
+            <button class="active" data-document-filter="all">All</button>
+            <button data-document-filter="invoice">Invoices</button>
+            <button data-document-filter="purchase_order">Purchase orders</button>
+            <button data-document-filter="delivery_receipt">Receipts</button>
+            <button data-document-filter="contract">Contracts</button>
+          </div>
+          <label class="table-search"><span>⌕</span><input id="document-search" type="search" placeholder="Filter documents"></label>
+        </div>
+        <section class="panel flush-panel">
+          <div class="table-wrap"><table class="data-table"><thead><tr><th>File</th><th>Document type</th><th>Extraction job</th><th>Linked record</th><th>Uploaded</th><th></th></tr></thead><tbody id="document-table"></tbody></table></div>
+          <div class="empty-state hidden" id="document-empty"><span>↑</span><h3>No documents yet</h3><p>Upload an invoice to start the pipeline.</p></div>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <div class="mobile-scrim" id="mobile-scrim"></div>
+  <div class="drawer-scrim" id="drawer-scrim"></div>
+  <aside class="case-drawer" id="case-drawer" aria-hidden="true"><div class="drawer-loading" id="drawer-loading"><span class="spinner"></span><p>Loading case evidence…</p></div><div id="case-detail"></div></aside>
+
+  <div class="modal-backdrop" id="upload-modal" aria-hidden="true">
+    <section class="modal upload-modal bundle-modal" role="dialog" aria-modal="true" aria-labelledby="upload-title">
+      <button class="modal-close" data-close-modal aria-label="Close">×</button>
+      <p class="eyebrow">01 / Upload &amp; extract</p><h2 id="upload-title">Start with your invoice</h2>
+      <p class="modal-subtitle">Upload the invoice first. LedgerLens extracts it, checks saved records, then asks for the next document only when it is needed.</p>
+      <div class="intake-note">Step 1 of the process. You will be asked for a purchase order, receipt, or contract only after the invoice has been checked.</div>
+      <form id="upload-form">
+        <div class="bundle-grid">
+          <label class="bundle-file invoice-first" data-file-slot="invoice"><input class="bundle-file-input" data-document-type="invoice" type="file" accept=".pdf,.png,.jpg,.jpeg,.tif,.tiff" required><span class="bundle-number">01</span><span class="bundle-copy"><strong>Supplier invoice</strong><small>Start reconciliation with this document</small><b data-file-name>Select invoice file</b></span><span class="bundle-state">＋</span></label>
+        </div>
+        <div class="bundle-footer"><div><strong id="bundle-count">Add an invoice to continue</strong><small>PDF, PNG, JPG or TIFF</small></div><div class="modal-actions"><button type="button" class="button button-ghost" data-close-modal>Cancel</button><button type="submit" class="button button-primary" id="upload-submit" disabled>Extract invoice →</button></div></div>
+      </form>
+    </section>
+  </div>
+
+  <div class="modal-backdrop" id="document-modal" aria-hidden="true"><section class="modal document-modal" role="dialog" aria-modal="true" aria-labelledby="document-modal-title"><button class="modal-close" data-close-document aria-label="Close">×</button><div id="document-detail"></div></section></div>
+
+  <div class="modal-backdrop" id="support-modal" aria-hidden="true"><section class="modal support-modal" role="dialog" aria-modal="true" aria-labelledby="support-title"><button class="modal-close" data-close-support aria-label="Close">×</button><p class="eyebrow">Reconciliation readiness</p><h2 id="support-title">Add the missing records</h2><p class="modal-subtitle">These documents are needed to verify this invoice. They are uploaded as source evidence and extracted for review.</p><div id="support-requirements"></div><form id="support-upload-form"><div id="support-upload-fields" class="support-upload-fields"></div><div class="bundle-footer"><div><strong id="support-count">Choose the missing documents</strong><small>PDF, PNG, JPG or TIFF</small></div><div class="modal-actions"><button type="button" class="button button-ghost" data-close-support>Cancel</button><button type="submit" class="button button-primary" id="support-submit" disabled>Upload required sources</button></div></div></form></section></div>
+
+  <div class="toast-stack" id="toast-stack" aria-live="polite"></div>
+  <script src="/static/dashboard.js?v=20260917-staged" defer></script>
+</body>
+</html>

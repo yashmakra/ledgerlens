@@ -1,0 +1,29 @@
+Metadata-Version: 2.4
+Name: supplier-invoice-reconciliation
+Version: 0.1.0
+Summary: Supplier invoice reconciliation API and data model
+Requires-Python: >=3.11
+Requires-Dist: fastapi<1,>=0.115
+Requires-Dist: uvicorn[standard]<1,>=0.30
+Requires-Dist: sqlalchemy<3,>=2.0
+Requires-Dist: psycopg[binary]<4,>=3.2
+Requires-Dist: pydantic<3,>=2.8
+Requires-Dist: python-dotenv<2,>=1
+Requires-Dist: python-multipart<1,>=0.0.9
+Requires-Dist: pymupdf<2,>=1.24
+Requires-Dist: pillow<13,>=10
+Requires-Dist: pytesseract<1,>=0.3.13
+Provides-Extra: dev
+Requires-Dist: pytest<9,>=8; extra == "dev"
+Requires-Dist: httpx<1,>=0.27; extra == "dev"
+Requires-Dist: ruff<1,>=0.6; extra == "dev"
+Provides-Extra: llm
+Requires-Dist: groq<2,>=0.11; extra == "llm"
+Provides-Extra: finetune
+Requires-Dist: accelerate<2,>=1; extra == "finetune"
+Requires-Dist: bitsandbytes<1,>=0.45; extra == "finetune"
+Requires-Dist: datasets<4,>=3; extra == "finetune"
+Requires-Dist: peft<1,>=0.14; extra == "finetune"
+Requires-Dist: torch<3,>=2.5; extra == "finetune"
+Requires-Dist: transformers<5,>=4.48; extra == "finetune"
+Requires-Dist: trl<1,>=0.15; extra == "finetune"

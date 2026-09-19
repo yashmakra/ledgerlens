@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: ledgerlens
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    # The free tier is used for a demo, so run the durable queue worker in
+    # the same service as the API. The worker loops while uvicorn serves HTTP.
+    dockerCommand: /bin/sh -c "python -m app.worker & exec uvicorn app.main:app --host 0.0.0.0 --port 8000"
+    healthCheckPath: /health/ready
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: ledgerlens-db
+          property: connectionString
+      - key: DOCUMENT_STORAGE_DIR
+        value: /app/data/documents
+      - key: GROQ_API_KEY
+        sync: false
+      - key: GROQ_MODEL
+        value: openai/gpt-oss-20b
+
+databases:
+  - name: ledgerlens-db
+    plan: free

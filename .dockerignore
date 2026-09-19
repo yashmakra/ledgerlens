@@ -1,0 +1,10 @@
+.venv
+__pycache__
+*.pyc
+.pytest_cache
+.test-tmp
+.pytest-temp-run*
+.env
+.git
+data/reconcile.db
+data/documents/*
