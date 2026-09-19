@@ -8,11 +8,9 @@ RUN apt-get update \
 
 COPY pyproject.toml README.md ./
 COPY app ./app
-COPY start_render.sh ./start_render.sh
-RUN chmod +x ./start_render.sh
+COPY start_render.py ./start_render.py
 RUN pip install --no-cache-dir .
 
 RUN mkdir -p /app/data/documents
 EXPOSE 8000
-
 

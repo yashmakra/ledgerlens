@@ -7,7 +7,7 @@ services:
     dockerContext: .
     # The free tier is used for a demo, so run the durable queue worker in
     # the same service as the API. The worker loops while uvicorn serves HTTP.
-    dockerCommand: ./start_render.sh
+    dockerCommand: python start_render.py
     healthCheckPath: /health/ready
     envVars:
       - key: DATABASE_URL
@@ -24,5 +24,6 @@ services:
 databases:
   - name: ledgerlens-db
     plan: free
+
 
 
