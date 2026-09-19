@@ -1,3 +1,14 @@
+# LedgerLens — Supplier Invoice Reconciliation
+
+## Live demo
+
+Try the deployed application:
+
+- [LedgerLens review dashboard](https://ledgerlens-qakt.onrender.com/review)
+- [Interactive API documentation](https://ledgerlens-qakt.onrender.com/docs)
+- [Service health check](https://ledgerlens-qakt.onrender.com/health/ready)
+
+The demo runs on Render’s free tier, so it may sleep after inactivity. Uploaded documents are intended for demonstration and testing only.
 ## Project overview
 
 LedgerLens is a production-shaped supplier invoice reconciliation platform for accounts-payable teams.
@@ -35,3 +46,5 @@ Run reconciliation checks
 Create a review case for exceptions
       ↓
 Approve, reject, or approve with a documented override
+
+
